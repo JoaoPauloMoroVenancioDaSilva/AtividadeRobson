@@ -1,5 +1,4 @@
 <!-- pet.html -->
-<!-- Button trigger modal -->
 <button type="button" class="btn btn-primary" onclick="IncluirPet()">
   Incluir Pet
 </button>
@@ -25,16 +24,16 @@
         </div>
         <div class="row col-12">
           <div class="col-md-6">
-          <label for="inputFone" class="form-label">Fone</label>
-          <input type="text" class="form-control" id="inputFone" required />
+            <label for="inputRaca" class="form-label">Raça</label>
+            <input type="text" class="form-control" id="inputRaca" required />
           </div>
           <div class="col-md-6">
-          <label for="inputAniversario" class="form-label">Aniversário</label>
-          <input type="date" class="form-control" id="inputAniversario" required />
+            <label for="inputIdade" class="form-label">Idade / Data Nasc.</label>
+            <input type="date" class="form-control" id="inputIdade" required />
           </div>
         </div>
         <div class="modal-footer mt-2">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
           <button type="button" class="btn btn-primary" data-bs-dismiss="modal" onclick="gravarDados()">Gravar</button>
         </div>
       </div>
@@ -43,18 +42,18 @@
 </div>
 
 <div class="mt-4"> 
-    <table class="table table-striped" id="tabelaPet">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Nome</th>
-          <th>Fone</th>
-          <th>Aniversário</th>
-          <th>Ações</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-  </div>
-  
-  <script src="/static/js/pet.js"></script>
+  <table class="table table-striped" id="tabelaPet">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Nome</th>
+        <th>Raça</th>
+        <th>Idade do Animal</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</div>
+
+<script src="/static/js/pet.js"></script>
