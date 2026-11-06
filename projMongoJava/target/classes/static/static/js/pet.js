@@ -1,116 +1,66 @@
-// Pet.js
-
-var API_URL = ""; // Se estiver no mesmo servidor Spring Boot, deixe vazio ou "/".
+var API_URL = ""; 
 
 var listaPet = [];
 
-/**
- * Formata os telefones.
- */
-function formatarTelefone(fone) {
-  // Remove tudo que não for dígito
-
-
-  let digits = "";
-  try{
-    digits = fone.replace(/\D/g, "");
-  } catch(erro){
-    digits = "0000000000"
-  }
-
-  if (digits.length === 10) {
-    // (XX) XXXX-XXXX
-    const ddd = digits.slice(0, 2);
-    const parte1 = digits.slice(2, 6);
-    const parte2 = digits.slice(6);
-    return `(${ddd}) ${parte1}-${parte2}`;
-  } else if (digits.length === 11) {
-    // (XX) XXXXX-XXXX
-    const ddd = digits.slice(0, 2);
-    const parte1 = digits.slice(2, 7);
-    const parte2 = digits.slice(7);
-    return `(${ddd}) ${parte1}-${parte2}`;
-  } else {
-    if (digits.length<10) {
-      return fone + " [Fone inválido]";
-    } else {
-      return fone;
-    }
-  }
-}
-
 /*
-* Formata a data
+- Formata a data (DD/MM/YYYY)
 */
 function formatarData(dataISO) {
-  // dataISO no formato "YYYY-MM-DD"
-  let ano = "";
-  let mes = "";
-  let dia = "";
+  if (!dataISO) return "";
+  let ano = "", mes = "", dia = "";
   try {
     [ano, mes, dia] = dataISO.split("-");    
   } catch (error) {
     try {
       [ano, mes, dia] = dataISO.split("/");
     } catch (error) {
-      ano = "2000";
-      mes = "01";
-      dia = "01";
+      return dataISO;
     }  
   }
   return `${dia}/${mes}/${ano}`;
 }
 
 function editarPet(pid) {
-  // Busca a Pet na variável global
-  const Pet = listaPet.find(p => p.id === pid);
-  if (!Pet) {
+  const pet = listaPet.find(p => p.id === pid);
+  if (!pet) {
     Swal.fire({
       icon: 'error',
       title: 'Erro na busca',
-      text: "Pet com id:"+pid+" não foi localizada!"
+      text: "Pet com id: " + pid + " não foi localizado!"
     });
     return;
   }
 
   // Preenche os campos do formulário
-  $("#inputId").val(Pet.id);
-  $("#inputId").attr("disabled", false);
-  $("#inputNome").val(Pet.nome);
-  $("#inputFone").val(Pet.fone); // se quiser manter o formato original
-  $("#inputAniversario").val(Pet.aniversario); // formato YYYY-MM-DD
+  $("#inputId").val(pet.id);
+  $("#inputId").prop("disabled", false);
+  $("#inputNome").val(pet.nome);
+  $("#inputRaca").val(pet.raca);
+  $("#inputIdade").val(pet.idade); 
   $('#staticBackdrop').modal('show');
-
-  // Se quiser deixar o ID como somente leitura, pode fazer:
-  // $("#inputId").prop("readonly", true);
-
-  // Agora o usuário pode alterar os dados e depois clicar em "Atualizar".
 }
 
 /**
- * Carrega a lista de Pet e preenche a tabela.
- */
+- Carrega a lista de Pets e preenche a tabela.
+*/
 function carregarPet() {
   $.ajax({
     url: API_URL + "/pets",
     method: "GET",
     success: function(dados) {
       listaPet = dados;
-      console.log(dados);
       const tbody = $("#tabelaPet tbody");
       tbody.empty();
       dados.forEach((p) => {
         tbody.append(`
           <tr>
             <td>${p.id}</td>
-            <td>${p.nome}</td>
-            <td>${formatarTelefone(p.fone)}</td>
-            <td>${formatarData(p.aniversario)}</td>
+            <td>${p.nome || ''}</td>
+            <td>${p.raca || ''}</td>
+            <td>${formatarData(p.idade)}</td>
             <td>
               <button class="btn btn-warning btn-sm" onclick="editarPet(${p.id})">Editar</button>
-              <button class="btn btn-danger btn-sm" onclick="deletarPet(${p.id})">
-                Deletar
-              </button>
+              <button class="btn btn-danger btn-sm" onclick="deletarPet(${p.id})">Deletar</button>
             </td>
           </tr>
         `);
@@ -123,20 +73,19 @@ function carregarPet() {
 }
 
 /**
- * Cria uma nova Pet (POST).
- */
+- Cria um novo Pet (POST).
+*/
 function criarPet() {
-  const Pet = {
-    id: parseInt($("#inputId").val()),
+  const pet = {
     nome: $("#inputNome").val(),
-    fone: $("#inputFone").val(),
-    aniversario: $("#inputAniversario").val()
+    raca: $("#inputRaca").val(),
+    idade: $("#inputIdade").val()
   };
   $.ajax({
     url: API_URL + "/pets",
     method: "POST",
     contentType: "application/json",
-    data: JSON.stringify(Pet),
+    data: JSON.stringify(pet),
     success: function(res) {
       Swal.fire({
         icon: 'success',
@@ -153,10 +102,10 @@ function criarPet() {
 
 function IncluirPet() {
   $("#inputId").val(0);
-  $("#inputId").attr("disabled", true);
+  $("#inputId").prop("disabled", true);
   $("#inputNome").val("");
-  $("#inputFone").val("");
-  $("#inputAniversario").val("");
+  $("#inputRaca").val("");
+  $("#inputIdade").val("");
   $('#staticBackdrop').modal('show');
 }
 
@@ -170,14 +119,14 @@ function gravarDados() {
 }
 
 /**
- * Atualiza uma Pet (PUT).
- */
+- Atualiza um Pet (PUT).
+*/
 function atualizarPet() {
   const pid = parseInt($("#inputId").val());
   const dados = {
     nome: $("#inputNome").val(),
-    fone: $("#inputFone").val(),
-    aniversario: $("#inputAniversario").val()
+    raca: $("#inputRaca").val(),
+    idade: $("#inputIdade").val()
   };
   $.ajax({
     url: API_URL + "/pets/" + pid,
@@ -199,12 +148,12 @@ function atualizarPet() {
 }
 
 /**
- * Deleta uma Pet (DELETE).
- */
+- Deleta um Pet (DELETE).
+*/
 function deletarPet(pid) {
   Swal.fire({
     title: 'Confirmação de Exclusão',
-    text: `Tem certeza que deseja excluir a Pet de ID ${pid}?`,
+    text: `Tem certeza que deseja excluir o Pet de ID ${pid}?`,
     icon: 'warning',
     showCancelButton: true,
     confirmButtonColor: '#d33',
@@ -226,7 +175,11 @@ function deletarPet(pid) {
         },
         error: function(err) {
           console.error(err);
-          Swal.fire({ icon: 'error', title: 'Erro', text: (err.responseJSON && err.responseJSON.erro) || 'Falha na operação' });
+          Swal.fire({ 
+            icon: 'error', 
+            title: 'Erro', 
+            text: (err.responseJSON && err.responseJSON.erro) || 'Falha na operação' 
+          });
         }
       });
     }
@@ -235,4 +188,4 @@ function deletarPet(pid) {
 
 $(document).ready(function(){
   carregarPet();
-})
+});
