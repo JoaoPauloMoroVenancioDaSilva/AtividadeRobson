@@ -17,16 +17,16 @@ public class PetModel extends BaseModel {
     public void criarPet(Pet pet) {
         Document doc = new Document("id", nextVal())
                 .append("nome", pet.getNome())
-                .append("fone", pet.getFone())
-                .append("aniversario", pet.getAniversario());
+                .append("raca", pet.getRaca())
+                .append("idade", pet.getIdade());
         collection.insertOne(doc);
     }
 
     /** Retorna quantos documentos foram encontrados (0 ou 1). */
     public long atualizarPet(Pet pet) {
         Document set = new Document("nome", pet.getNome())
-                .append("fone", pet.getFone())
-                .append("aniversario", pet.getAniversario());
+                .append("raca", pet.getRaca())
+                .append("idade", pet.getIdade());
         return collection.updateOne(new Document("id", pet.getId()), new Document("$set", set))
                 .getMatchedCount();
     }
