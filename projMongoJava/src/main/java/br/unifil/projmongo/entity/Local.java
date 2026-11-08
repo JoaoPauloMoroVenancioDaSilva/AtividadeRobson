@@ -1,6 +1,5 @@
 package br.unifil.projmongo.entity;
 
-/** Entidade que representa um Local (ex.: pet shop, clínica, parque). */
 public class Local {
     private Integer id;
     private String nome;

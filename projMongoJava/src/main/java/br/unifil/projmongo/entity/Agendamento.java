@@ -1,16 +1,12 @@
 package br.unifil.projmongo.entity;
 
-/**
- * Entidade de relacionamento: uma Pessoa leva um Pet a um Local em uma data.
- * Guarda apenas os ids (referências) das outras entidades.
- */
 public class Agendamento {
     private Integer id;
     private Integer pessoaId;
     private Integer petId;
     private Integer localId;
-    private String data;       // formato YYYY-MM-DDTHH:MM (input datetime-local)
-    private String descricao;  // ex.: "Banho e tosa", "Consulta", "Passeio"
+    private String data;
+    private String descricao;
 
     public Agendamento() {}
 

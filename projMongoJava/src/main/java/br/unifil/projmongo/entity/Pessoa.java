@@ -4,7 +4,7 @@ public class Pessoa {
     private Integer id;
     private String nome;
     private String fone;
-    private String aniversario; // formato YYYY-MM-DD
+    private String aniversario;
 
     public Pessoa() {}
 

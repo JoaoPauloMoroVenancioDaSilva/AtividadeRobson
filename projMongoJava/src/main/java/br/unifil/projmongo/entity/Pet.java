@@ -1,11 +1,10 @@
 package br.unifil.projmongo.entity;
 
-/** Entidade que representa um Pet. */
 public class Pet {
     private Integer id;
     private String nome;
     private String raca;
-    private String idade; // Formato YYYY-MM-DD ou texto/data
+    private String idade;
 
     public Pet() {}
 
