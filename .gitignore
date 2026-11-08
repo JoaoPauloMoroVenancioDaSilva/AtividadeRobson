@@ -1,7 +1,7 @@
 
 projMongoJava/src/main/resources/application.properties
 /.idea
-
+**/target/
 # Default ignored files
 /shelf/
 /workspace.xml
