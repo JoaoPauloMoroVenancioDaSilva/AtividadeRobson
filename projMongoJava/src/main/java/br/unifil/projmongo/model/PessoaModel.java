@@ -6,7 +6,6 @@ import org.bson.Document;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
-/** Persistência de Pessoa no MongoDB (collection "Pessoas"). */
 @Repository
 public class PessoaModel extends BaseModel {
 
@@ -27,6 +26,7 @@ public class PessoaModel extends BaseModel {
         Document set = new Document("nome", pessoa.getNome())
                 .append("fone", pessoa.getFone())
                 .append("aniversario", pessoa.getAniversario());
+        
         return collection.updateOne(new Document("id", pessoa.getId()), new Document("$set", set))
                 .getMatchedCount();
     }

@@ -1,11 +1,10 @@
 package br.unifil.projmongo.entity;
 
-/** Entidade que representa uma Pessoa. */
 public class Pessoa {
     private Integer id;
     private String nome;
     private String fone;
-    private String aniversario; // formato YYYY-MM-DD (igual ao front-end)
+    private String aniversario; // formato YYYY-MM-DD
 
     public Pessoa() {}
 
