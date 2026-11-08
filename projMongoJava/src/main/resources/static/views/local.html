@@ -3,18 +3,18 @@
   Incluir Local
 </button>
 
-<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+<div class="modal fade" id="modalLocal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modalLocalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h1 class="modal-title fs-5">Gerenciar Locais</h1>
+        <h1 class="modal-title fs-5" id="modalLocalLabel">Gerenciar Locais</h1>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
         <div class="row col-12">
           <div class="col-md-4">
             <label for="inputId" class="form-label">ID</label>
-            <input type="number" class="form-control" id="inputId" />
+            <input type="number" class="form-control" id="inputId" disabled />
           </div>
           <div class="col-md-8">
             <label for="inputNome" class="form-label">Nome</label>
@@ -33,7 +33,7 @@
         </div>
         <div class="modal-footer mt-2">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary" data-bs-dismiss="modal" onclick="gravarDados()">Gravar</button>
+          <button type="button" class="btn btn-primary" onclick="gravarDados()">Gravar</button>
         </div>
       </div>
     </div>
@@ -43,7 +43,8 @@
 <div class="mt-4">
   <table class="table table-striped" id="tabelaLocal">
     <thead>
-      <tr><th>ID</th><th>Nome</th><th>Endereço</th><th>Cidade</th><th>Ações</th></tr>
+    <tr><th>ID</th><th>Nome</th><th>Endereço</th><th>Cidade</th><th>Ações</th>
+    </tr>
     </thead>
     <tbody></tbody>
   </table>

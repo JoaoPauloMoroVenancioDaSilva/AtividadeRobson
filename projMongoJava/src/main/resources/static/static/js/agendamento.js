@@ -1,4 +1,3 @@
-// agendamento.js
 var API_URL = "";
 var listaAgendamento = [];
 
@@ -8,14 +7,12 @@ function mostrarErro(err) {
 }
 
 function formatarDataHora(valor) {
-  // "YYYY-MM-DDTHH:MM" -> "DD/MM/YYYY HH:MM"
   if (!valor) return "";
   const [data, hora] = valor.split("T");
   const [ano, mes, dia] = data.split("-");
   return `${dia}/${mes}/${ano}` + (hora ? " " + hora : "");
 }
 
-/** Preenche um <select> com os registros de uma rota (/pessoas, /pets, /locais). */
 function carregarCombo(rota, seletor) {
   return $.get(API_URL + rota, function(dados) {
     const sel = $(seletor);
@@ -26,9 +23,9 @@ function carregarCombo(rota, seletor) {
 
 function carregarCombos() {
   return $.when(
-    carregarCombo("/pessoas", "#selPessoa"),
-    carregarCombo("/pets", "#selPet"),
-    carregarCombo("/locais", "#selLocal")
+      carregarCombo("/pessoas", "#selPessoa"),
+      carregarCombo("/pets", "#selPet"),
+      carregarCombo("/locais", "#selLocal")
   );
 }
 
@@ -67,7 +64,7 @@ function preencher(a) {
 function IncluirAgendamento() {
   carregarCombos().then(function() {
     preencher({ id: 0, data: "", pessoaId: "", petId: "", localId: "", descricao: "" });
-    $('#staticBackdrop').modal('show');
+    $('#modalAgendamento').modal('show');
   });
 }
 
@@ -76,7 +73,7 @@ function editarAgendamento(pid) {
   if (!a) return;
   carregarCombos().then(function() {
     preencher(a);
-    $('#staticBackdrop').modal('show');
+    $('#modalAgendamento').modal('show');
   });
 }
 
@@ -96,6 +93,7 @@ function gravarDados() {
     data: JSON.stringify(dados),
     success: function(res) {
       Swal.fire({ icon: 'success', title: 'Sucesso', text: res.mensagem });
+      $('#modalAgendamento').modal('hide');
       carregarAgendamento();
     },
     error: mostrarErro
@@ -126,7 +124,3 @@ function deletarAgendamento(pid) {
     }
   });
 }
-
-$(document).ready(function() {
-  carregarAgendamento();
-});

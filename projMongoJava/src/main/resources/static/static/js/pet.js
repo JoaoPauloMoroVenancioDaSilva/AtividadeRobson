@@ -1,13 +1,26 @@
-// js/pet.js
-var API_URL = ""; 
+var API_URL = "";
 var listaPet = [];
 
+function mostrarErro(err) {
+  console.error(err);
+  Swal.fire({
+    icon: 'error',
+    title: 'Erro',
+    text: (err.responseJSON && err.responseJSON.erro) || 'Falha na operação'
+  });
+}
+
 function formatarData(dataISO) {
+  if (!dataISO) return "";
   let ano = "", mes = "", dia = "";
   try {
-    [ano, mes, dia] = dataISO.split("-");    
+    if (dataISO.includes("-")) {
+      [ano, mes, dia] = dataISO.split("-");
+    } else if (dataISO.includes("/")) {
+      [ano, mes, dia] = dataISO.split("/");
+    }
   } catch (error) {
-    return dataISO; //caso a idade seja texto livre
+    return dataISO;
   }
   return `${dia}/${mes}/${ano}`;
 }
@@ -35,18 +48,26 @@ function carregarPet() {
         `);
       });
     },
-    error: function(err) { console.error(err); }
+    error: mostrarErro
   });
 }
 
 function editarPet(pid) {
   const pet = listaPet.find(p => p.id === pid);
-  if (!pet) return;
-  $("#inputId").val(pet.id).attr("disabled", false);
+  if (!pet) {
+    Swal.fire({
+      icon: 'error',
+      title: 'Erro na busca',
+      text: "Pet com ID " + pid + " não foi localizado!"
+    });
+    return;
+  }
+
+  $("#inputId").val(pet.id).attr("disabled", true);
   $("#inputNome").val(pet.nome);
-  $("#inputRaca").val(pet.raca); 
-  $("#inputIdade").val(pet.idade); 
-  $('#staticBackdrop').modal('show');
+  $("#inputRaca").val(pet.raca);
+  $("#inputIdade").val(pet.idade);
+  $('#modalPet').modal('show');
 }
 
 function IncluirPet() {
@@ -54,27 +75,32 @@ function IncluirPet() {
   $("#inputNome").val("");
   $("#inputRaca").val("");
   $("#inputIdade").val("");
-  $('#staticBackdrop').modal('show');
+  $('#modalPet').modal('show');
 }
 
 function gravarDados() {
-  const pid = parseInt($("#inputId").val());
+  const pid = parseInt($("#inputId").val()) || 0;
   const dados = {
     nome: $("#inputNome").val(),
     raca: $("#inputRaca").val(),
     idade: $("#inputIdade").val()
   };
-  
+
   $.ajax({
     url: API_URL + "/pets" + (pid === 0 ? "" : "/" + pid),
     method: pid === 0 ? "POST" : "PUT",
     contentType: "application/json",
     data: JSON.stringify(dados),
     success: function(res) {
-      Swal.fire({ icon: 'success', title: 'Sucesso', text: res.mensagem });
+      Swal.fire({
+        icon: 'success',
+        title: 'Sucesso',
+        text: res.mensagem
+      });
+      $('#modalPet').modal('hide');
       carregarPet();
     },
-    error: function(err) { console.error(err); }
+    error: mostrarErro
   });
 }
 
@@ -94,14 +120,15 @@ function deletarPet(pid) {
         url: API_URL + "/pets/" + pid,
         method: "DELETE",
         success: function(res) {
-          Swal.fire({ icon: 'success', title: 'Sucesso', text: res.mensagem });
+          Swal.fire({
+            icon: 'success',
+            title: 'Sucesso',
+            text: res.mensagem
+          });
           carregarPet();
-        }
+        },
+        error: mostrarErro
       });
     }
   });
 }
-
-$(document).ready(function(){
-  carregarPet();
-});

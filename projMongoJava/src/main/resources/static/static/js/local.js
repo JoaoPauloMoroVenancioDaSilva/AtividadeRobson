@@ -1,4 +1,3 @@
-// local.js
 var API_URL = "";
 var listaLocal = [];
 
@@ -29,7 +28,7 @@ function carregarLocal() {
 }
 
 function preencher(l) {
-  $("#inputId").val(l.id);
+  $("#inputId").val(l.id).attr("disabled", true);
   $("#inputNome").val(l.nome);
   $("#inputEndereco").val(l.endereco);
   $("#inputCidade").val(l.cidade);
@@ -37,16 +36,14 @@ function preencher(l) {
 
 function IncluirLocal() {
   preencher({ id: 0, nome: "", endereco: "", cidade: "" });
-  $("#inputId").attr("disabled", true);
-  $('#staticBackdrop').modal('show');
+  $('#modalLocal').modal('show');
 }
 
 function editarLocal(pid) {
   const l = listaLocal.find(x => x.id === pid);
   if (!l) return;
   preencher(l);
-  $("#inputId").attr("disabled", true);
-  $('#staticBackdrop').modal('show');
+  $('#modalLocal').modal('show');
 }
 
 function gravarDados() {
@@ -63,6 +60,7 @@ function gravarDados() {
     data: JSON.stringify(dados),
     success: function(res) {
       Swal.fire({ icon: 'success', title: 'Sucesso', text: res.mensagem });
+      $('#modalLocal').modal('hide');
       carregarLocal();
     },
     error: mostrarErro
@@ -93,7 +91,3 @@ function deletarLocal(pid) {
     }
   });
 }
-
-$(document).ready(function() {
-  carregarLocal();
-});
