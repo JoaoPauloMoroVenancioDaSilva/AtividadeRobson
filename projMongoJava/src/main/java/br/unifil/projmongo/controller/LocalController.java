@@ -1,43 +1,54 @@
 package br.unifil.projmongo.controller;
 
+import br.unifil.projmongo.service.LocalService;
 import br.unifil.projmongo.entity.Local;
-import br.unifil.projmongo.model.AgendamentoModel;
-import br.unifil.projmongo.model.LocalModel;
 import org.bson.Document;
-import org.springframework.stereotype.Service;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
-@Service
+@RestController
+@RequestMapping("/locais")
 public class LocalController {
 
-    private final LocalModel model;
-    private final AgendamentoModel agendamentoModel;
+    private final LocalService controller;
 
-    public LocalController(LocalModel model, AgendamentoModel agendamentoModel) {
-        this.model = model;
-        this.agendamentoModel = agendamentoModel;
+    public LocalController(LocalService controller) {
+        this.controller = controller;
     }
 
-    public List<Document> listarLocais() {
-        return model.listarTodos();
+    @GetMapping
+    public ResponseEntity<List<Document>> listar() {
+        return ResponseEntity.ok(controller.listarLocais());
     }
 
-    public void criarLocal(Local local) {
-        model.criarLocal(local);
+    @PostMapping
+    public ResponseEntity<Map<String, String>> criar(@RequestBody Local local) {
+        controller.criarLocal(local);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(Map.of("mensagem", "Local inserido com sucesso!"));
     }
 
-    public long atualizarLocal(int pid, Local dados) {
-        dados.setId(pid);
-        return model.atualizarLocal(dados);
+    @PutMapping("/{pid}")
+    public ResponseEntity<Map<String, String>> atualizar(@PathVariable int pid, @RequestBody Local local) {
+        if (controller.atualizarLocal(pid, local) == 0) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("erro", "Local não encontrado!"));
+        }
+        return ResponseEntity.ok(Map.of("mensagem", "Local atualizado com sucesso!"));
     }
 
-    public long deletarLocal(int pid) {
-        return model.deletarLocal(pid);
-    }
-
-    /** True se existir algum agendamento usando este registro. */
-    public boolean possuiAgendamentos(int pid) {
-        return agendamentoModel.contarPor("localId", pid) > 0;
+    @DeleteMapping("/{pid}")
+    public ResponseEntity<Map<String, String>> deletar(@PathVariable int pid) {
+        if (controller.possuiAgendamentos(pid)) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(Map.of("erro", "Não é possível excluir: existem agendamentos vinculados."));
+        }
+        if (controller.deletarLocal(pid) == 0) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("erro", "Local não encontrado!"));
+        }
+        return ResponseEntity.ok(Map.of("mensagem", "Local deletado com sucesso!"));
     }
 }

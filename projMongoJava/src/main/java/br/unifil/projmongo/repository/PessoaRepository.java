@@ -1,4 +1,4 @@
-package br.unifil.projmongo.model;
+package br.unifil.projmongo.repository;
 
 import br.unifil.projmongo.entity.Pessoa;
 import com.mongodb.client.MongoClient;
@@ -7,9 +7,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class PessoaModel extends BaseModel {
+public class PessoaRepository extends BaseRepository {
 
-    public PessoaModel(MongoClient client, @Value("${app.mongodb.database}") String dbName) {
+    public PessoaRepository(MongoClient client, @Value("${app.mongodb.database}") String dbName) {
         super(client, dbName, "Pessoas");
     }
 
@@ -21,7 +21,6 @@ public class PessoaModel extends BaseModel {
         collection.insertOne(doc);
     }
 
-    /** Retorna quantos documentos foram encontrados (0 ou 1). */
     public long atualizarPessoa(Pessoa pessoa) {
         Document set = new Document("nome", pessoa.getNome())
                 .append("fone", pessoa.getFone())

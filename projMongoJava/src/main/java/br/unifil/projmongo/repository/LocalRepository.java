@@ -1,4 +1,4 @@
-package br.unifil.projmongo.model;
+package br.unifil.projmongo.repository;
 
 import br.unifil.projmongo.entity.Local;
 import com.mongodb.client.MongoClient;
@@ -6,11 +6,10 @@ import org.bson.Document;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
-/** Persistência de Local no MongoDB (collection "Locais"). */
 @Repository
-public class LocalModel extends BaseModel {
+public class LocalRepository extends BaseRepository {
 
-    public LocalModel(MongoClient client, @Value("${app.mongodb.database}") String dbName) {
+    public LocalRepository(MongoClient client, @Value("${app.mongodb.database}") String dbName) {
         super(client, dbName, "Locais");
     }
 

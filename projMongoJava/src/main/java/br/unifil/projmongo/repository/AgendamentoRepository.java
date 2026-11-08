@@ -1,4 +1,4 @@
-package br.unifil.projmongo.model;
+package br.unifil.projmongo.repository;
 
 import br.unifil.projmongo.entity.Agendamento;
 import com.mongodb.client.MongoClient;
@@ -6,20 +6,23 @@ import org.bson.Document;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
-/** Persistência de Agendamento no MongoDB (collection "Agendamentos"). */
 @Repository
-public class AgendamentoModel extends BaseModel {
+public class AgendamentoRepository extends BaseRepository {
 
-    public AgendamentoModel(MongoClient client, @Value("${app.mongodb.database}") String dbName) {
+    public AgendamentoRepository(MongoClient client, @Value("${app.mongodb.database}") String dbName) {
         super(client, dbName, "Agendamentos");
     }
 
     private Document campos(Agendamento a) {
-        return new Document("pessoaId", a.getPessoaId())
+        Document doc = new Document("pessoaId", a.getPessoaId())
                 .append("petId", a.getPetId())
                 .append("localId", a.getLocalId())
-                .append("data", a.getData())
-                .append("descricao", a.getDescricao());
+                .append("data", a.getData());
+
+        if (a.getDescricao() != null) {
+            doc.append("descricao", a.getDescricao());
+        }
+        return doc;
     }
 
     public void criarAgendamento(Agendamento a) {

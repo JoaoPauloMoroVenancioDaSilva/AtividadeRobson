@@ -1,43 +1,54 @@
 package br.unifil.projmongo.controller;
 
+import br.unifil.projmongo.service.PetService;
 import br.unifil.projmongo.entity.Pet;
-import br.unifil.projmongo.model.AgendamentoModel;
-import br.unifil.projmongo.model.PetModel;
 import org.bson.Document;
-import org.springframework.stereotype.Service;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
-@Service
+@RestController
+@RequestMapping("/pets")
 public class PetController {
 
-    private final PetModel model;
-    private final AgendamentoModel agendamentoModel;
+    private final PetService controller;
 
-    public PetController(PetModel model, AgendamentoModel agendamentoModel) {
-        this.model = model;
-        this.agendamentoModel = agendamentoModel;
+    public PetController(PetService controller) {
+        this.controller = controller;
     }
 
-    public List<Document> listarPets() {
-        return model.listarTodos();
+    @GetMapping
+    public ResponseEntity<List<Document>> listar() {
+        return ResponseEntity.ok(controller.listarPets());
     }
 
-    public void criarPet(Pet pet) {
-        model.criarPet(pet);
+    @PostMapping
+    public ResponseEntity<Map<String, String>> criar(@RequestBody Pet pet) {
+        controller.criarPet(pet);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(Map.of("mensagem", "Pet inserido com sucesso!"));
     }
 
-    public long atualizarPet(int pid, Pet dados) {
-        dados.setId(pid);
-        return model.atualizarPet(dados);
+    @PutMapping("/{pid}")
+    public ResponseEntity<Map<String, String>> atualizar(@PathVariable int pid, @RequestBody Pet pet) {
+        if (controller.atualizarPet(pid, pet) == 0) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("erro", "Pet não encontrado!"));
+        }
+        return ResponseEntity.ok(Map.of("mensagem", "Pet atualizado com sucesso!"));
     }
 
-    public long deletarPet(int pid) {
-        return model.deletarPet(pid);
-    }
-
-    /** True se existir algum agendamento usando este registro. */
-    public boolean possuiAgendamentos(int pid) {
-        return agendamentoModel.contarPor("petId", pid) > 0;
+    @DeleteMapping("/{pid}")
+    public ResponseEntity<Map<String, String>> deletar(@PathVariable int pid) {
+        if (controller.possuiAgendamentos(pid)) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(Map.of("erro", "Não é possível excluir: existem agendamentos vinculados."));
+        }
+        if (controller.deletarPet(pid) == 0) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("erro", "Pet não encontrado!"));
+        }
+        return ResponseEntity.ok(Map.of("mensagem", "Pet deletado com sucesso!"));
     }
 }

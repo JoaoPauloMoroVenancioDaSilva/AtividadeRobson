@@ -1,4 +1,4 @@
-package br.unifil.projmongo.model;
+package br.unifil.projmongo.repository;
 
 import br.unifil.projmongo.entity.Pet;
 import com.mongodb.client.MongoClient;
@@ -6,11 +6,10 @@ import org.bson.Document;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
-/** Persistência de Pet no MongoDB (collection "Pets"). */
 @Repository
-public class PetModel extends BaseModel {
+public class PetRepository extends BaseRepository {
 
-    public PetModel(MongoClient client, @Value("${app.mongodb.database}") String dbName) {
+    public PetRepository(MongoClient client, @Value("${app.mongodb.database}") String dbName) {
         super(client, dbName, "Pets");
     }
 
@@ -22,7 +21,6 @@ public class PetModel extends BaseModel {
         collection.insertOne(doc);
     }
 
-    /** Retorna quantos documentos foram encontrados (0 ou 1). */
     public long atualizarPet(Pet pet) {
         Document set = new Document("nome", pet.getNome())
                 .append("raca", pet.getRaca())
